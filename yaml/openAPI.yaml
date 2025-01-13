@@ -136,14 +136,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Produk'
+              $ref: '#/components/schemas/DataJawaban'
       responses:
         '200':
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Response'
+                $ref: '#/components/schemas/ResponseDataJawaban'
         '405':
           description: Invalid input          
       security:  
@@ -750,7 +750,63 @@ components:
                       example: "Pekerjaan Pertanian"  
       required:  
         - data  
-
+    DataJawaban:  
+      type: object  
+      properties:  
+        customer_rmib_id:  
+          type: integer  
+          example: 3  
+        data:  
+          type: array  
+          items:  
+            type: object  
+            properties:  
+              section:  
+                type: string  
+                example: "A"  
+              data:  
+                type: array  
+                items:  
+                  type: string  
+                  example: "1"  
+        essay_answer:  
+          type: array  
+          items:  
+            type: string  
+            example: "petani"  
+        time:  
+          type: string  
+          example: "01:14"  
+      required:  
+        - customer_rmib_id  
+        - data  
+        - essay_answer  
+        - time 
+    ResponseDataJawaban:  
+      type: object  
+      properties:  
+        message:  
+          type: string  
+          example: "Data sudah di proses dan berhasil terkirim"  
+        data:  
+          type: array  
+          items:  
+            type: object  
+            properties:  
+              index:  
+                type: integer  
+                example: 1  
+              total:  
+                type: integer  
+                example: 68  
+              summedData:  
+                type: array  
+                items:  
+                  type: string  
+                  example: "1"  
+      required:  
+        - message  
+        - data    
   securitySchemes:  
     BearerAuth:  
       type: http  
