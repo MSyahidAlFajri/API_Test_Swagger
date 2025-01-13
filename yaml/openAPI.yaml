@@ -1,0 +1,762 @@
+openapi: 3.0.3
+info:
+  title: Dokumen API untuk Fitur Tes RMIB - OpenAPI 3.0
+  description: >-
+    Dokumentasi API untuk Fitur Tes RMIB
+  termsOfService: https://github.com/MSyahidAlFajri/API_Test_Swagger
+  contact:
+    email: masyahida4@gmail.com
+  license:
+    name: Backend Package
+    url: https://pkg.go.dev/github.com/Rumahkopi/rkbackend
+  version: 1.0.11
+externalDocs:
+  description: Website
+  url: http://localhost:5173/login
+servers:
+  - url: http://127.0.0.1:8000/api/
+tags:
+  - name: Auth
+    description: Authentikasi
+    externalDocs:
+      description: Deskripsi dan Kode Program
+      url: https://github.com/Rumahkopi/rkbackend
+  - name: Registeration
+    description: Registeration User
+    externalDocs:
+      description: Deskripsi dan Kode Program
+      url: https://github.com/Rumahkopi/rkbackend
+  - name: Fitur Tes RMIB
+    description: Pengelolaan Tes RMIB
+    externalDocs:
+      description: Deskripsi dan Kode Program
+      url: https://github.com/Rumahkopi/rkbackend
+paths:
+  /login:
+    post:
+      tags:
+        - Auth
+      summary: Login get Token
+      description: Login and Get Admin Token
+      operationId: authService
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '405':
+          description: Invalid input
+  /register:
+    post:
+      tags:
+        - Registeration
+      summary: Register User
+      description: Register User 
+      operationId: authService
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistration'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '405':
+          description: Invalid input
+  /hit:
+    post:
+      tags:
+        - Fitur Tes RMIB
+      summary: API hit
+      description: API hit ini berfungsi mendapatkan customer_rmib_id untuk proses test RMIB dan akan di gunakan untuk bagian mengirimkan jawaban, jika tidak di lakukan makan akan menghambat proses tahapan tes RMIB 
+      operationId: hitCustomerRmibId 
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerDataHit'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerDataHitResponse'
+        '405':
+          description: Invalid input          
+      security:  
+        - BearerAuth: []        
+  /rmib/questions:  
+    get:  
+      tags:  
+        - Fitur Tes RMIB  
+      summary: Get Soal RMIB Berdasarkan Gender   
+      description: Get soal RMIB berdasarkan gender, jadi pengimplementasian API nya menggunakan Params jadi di tambahkan ?gender= sesuai dengan gandernya ,jika laki - laki itu di tandai dengan 1 dan jika perempuan di tandai dengan 2  
+      operationId: GetsoalRMIB  
+      parameters:  
+        - name: gender  
+          in: query  
+          required: true  
+          description: Gender (1 untuk laki-laki, 2 untuk perempuan)  
+          schema:  
+            type: integer  
+            enum: [1, 2]  
+      responses:  
+        '200':  
+          description: successful operation  
+          content:  
+            application/json:  
+              schema:  
+                type: array  
+                items:  
+                  $ref: '#/components/schemas/GetQustionRMIBResponse'  
+        '400':  
+          description: Invalid status value  
+      security:  
+        - BearerAuth: [] 
+  /answer:
+    post:
+      tags:
+        - Fitur Tes RMIB
+      summary: Post Jawaban
+      description: API ini berfungsi untuk mengirimkan hasil jawaban yang sudah di isi oleh customer 
+      operationId: PostJawaban
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Produk'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+        '405':
+          description: Invalid input          
+      security:  
+        - BearerAuth: []
+  
+components:
+  schemas:
+    Login:
+      type: object
+      properties:
+        email:
+          type: string
+          example: syahid25@gmail.com
+        password:
+          type: string
+          example: password
+    LoginResponse:  
+      type: object  
+      properties:  
+        success:  
+          type: boolean  
+          example: true  
+        user:  
+          type: object  
+          properties:  
+            id:  
+              type: integer  
+              example: 792  
+            email:  
+              type: string  
+              format: email  
+              example: syahid@gmail.com  
+            role:  
+              type: string  
+              example: customer  
+        customer:  
+          type: object  
+          properties:  
+            id:  
+              type: integer  
+              example: 800  
+            user:  
+              type: object  
+              properties:  
+                id:  
+                  type: integer  
+                  example: 792  
+                email:  
+                  type: string  
+                  format: email  
+                  example: syahid@gmail.com  
+                role:  
+                  type: string  
+                  example: customer  
+                created_at:  
+                  type: string  
+                  format: date-time  
+                  example: 2025-01-01T12:10:46.000000Z  
+                updated_at:  
+                  type: string  
+                  format: date-time  
+                  example: 2025-01-01T12:10:46.000000Z  
+            name:  
+              type: string  
+              example: Syahid AF  
+            first_name:  
+              type: string  
+              example: Syahid  
+            last_name:  
+              type: string  
+              example: AF  
+            birth_place:  
+              type: string  
+              example: Bandung  
+            birth_date:  
+              type: string  
+              example: 24-07-2003  
+            gender:  
+              type: string  
+              example: Laki-laki  
+            region:  
+              type: string  
+              example: LANGENSARI, SOLOKAN JERUK, KABUPATEN BANDUNG, JAWA BARAT  
+            village:  
+              type: object  
+              properties:  
+                id:  
+                  type: integer  
+                  example: 3204121004  
+                name:  
+                  type: string  
+                  example: LANGENSARI  
+                district:  
+                  type: object  
+                  properties:  
+                    id:  
+                      type: integer  
+                      example: 3204121  
+                    name:  
+                      type: string  
+                      example: SOLOKAN JERUK  
+                    regency:  
+                      type: object  
+                      properties:  
+                        id:  
+                          type: integer  
+                          example: 3204  
+                        name:  
+                          type: string  
+                          example: KABUPATEN BANDUNG  
+                        province:  
+                          type: object  
+                          properties:  
+                            id:  
+                              type: integer  
+                              example: 32  
+                            name:  
+                              type: string  
+                              example: JAWA BARAT  
+            address:  
+              type: string  
+              example: bandung  
+            number:  
+              type: string  
+              example: 08317438123123  
+            blood_group:  
+              type: string  
+              example: O  
+            religion:  
+              type: string  
+              example: "1"  
+            status:  
+              type: string  
+              example: Belum Kawin  
+            ethnic:  
+              type: string  
+              example: Sunda  
+            nationality:  
+              type: string  
+              example: Indonesia  
+            child_number:  
+              type: integer  
+              example: 2  
+            from_child_number:  
+              type: integer  
+              example: 3  
+            grade:  
+              type: string  
+              example: "12"  
+            majoring:  
+              type: string  
+              example: IPA  
+            institutions:  
+              type: object  
+              properties:  
+                id:  
+                  type: integer  
+                  example: 18  
+                name:  
+                  type: string  
+                  example: SMAS NASIONAL ANGLO  
+                type:  
+                  type: string  
+                  example: SMA  
+                region:  
+                  type: string  
+                  example: Kota Jakarta Pusat  
+                created_at:  
+                  type: string  
+                  format: date-time  
+                  example: 2024-03-05T16:00:00.000000Z  
+                updated_at:  
+                  type: string  
+                  format: date-time  
+                  nullable: true  
+                  example: null  
+                deleted_at:  
+                  type: string  
+                  format: date-time  
+                  nullable: true  
+                  example: null  
+            is_student:  
+              type: integer  
+              example: 1  
+            image:  
+              type: string  
+              nullable: true  
+              example: null  
+            is_detected:  
+              type: string  
+              example: Belum  
+            is_advance:  
+              type: string  
+              example: Tidak  
+            is_starter_pack:  
+              type: string  
+              example: Tidak  
+            is_payment_gim:  
+              type: string  
+              example: Tidak  
+            is_payment_assessment:  
+              type: string  
+              example: Tidak  
+            is_payment_iq:  
+              type: string  
+              example: Tidak  
+            is_payment_cpm:  
+              type: string  
+              example: Tidak  
+            is_payment_iaa:  
+              type: string  
+              example: Tidak  
+            customers_results:  
+              type: string  
+              nullable: true  
+              example: null  
+            customers_iq:  
+              type: string  
+              nullable: true  
+              example: null  
+            customers_assessments:  
+              type: string  
+              nullable: true  
+              example: null  
+            customers_cpm:  
+              type: string  
+              nullable: true  
+              example: null  
+            customers_iaa:  
+              type: string  
+              nullable: true  
+              example: null  
+            customers_rmib:  
+              type: object  
+              properties:  
+                id:  
+                  type: integer  
+                  example: 2  
+                customer_id:  
+                  type: integer  
+                  example: 800  
+                rmib_1_id:  
+                  type: integer  
+                  example: 12  
+                rmib_2_id:  
+                  type: integer  
+                  example: 1  
+                rmib_3_id:  
+                  type: integer  
+                  example: 2  
+                answers:  
+                  type: string  
+                  example: "[{\"section\":\"A\",\"sorted_data\":\"[\\\"1\\\",\\\"2\\\",\\\"3\\\",\\\"4\\\",\\\"5\\\",\\\"6\\\",\\\"7\\\",\\\"8\\\",\\\"9\\\",\\\"10\\\",\\\"11\\\",\\\"12\\\"]\"}]"  
+                essay_answers:  
+                  type: string  
+                  example: "[\"Bengkel\",\"Youtuber\",\"Copy Writting\"]"  
+                time:  
+                  type: string  
+                  example: "01:00"  
+                age:  
+                  type: string  
+                  example: "21"  
+                created_at:  
+                  type: string  
+                  format: date-time  
+                  example: 2025-01-01T12:12:22.000000Z  
+                updated_at:  
+                  type: string  
+                  format: date-time  
+                  example: 2025-01-01T12:15:15.000000Z  
+                rmib1:  
+                  type: object  
+                  properties:  
+                    id:  
+                      type: integer  
+                      example: 12  
+                    name:  
+                      type: string  
+                      example: Medical  
+                    slug:  
+                      type: string  
+                      example: MED  
+                    image:  
+                      type: string  
+                      nullable: true  
+                      example: null  
+                    desc:  
+                      type: string  
+                      example: Minat klien pada bidang medis dan kesehatan berada pada level rendah/sedang/tinggi.  
+                    job_recommendation:  
+                      type: string  
+                      example: Dokter, perawat, apoteker.  
+                    advice:  
+                      type: string  
+                      example: Jika klien tertarik dengan bidang medis, mempertimbangkan karier dalam bidang kesehatan.  
+                    created_at:  
+                      type: string  
+                      format: date-time  
+                      nullable: true  
+                      example: null  
+                    updated_at:  
+                      type: string  
+                      format: date-time  
+                      nullable: true  
+                      example: null  
+                rmib2:  
+                  type: object  
+                  properties:  
+                    id:  
+                      type: integer  
+                      example: 1  
+                    name:  
+                      type: string  
+                      example: Outdoor  
+                    slug:  
+                      type: string  
+                      example: OUT  
+                    image:  
+                      type: string  
+                      nullable: true  
+                      example: null  
+                    desc:  
+                      type: string  
+                      example: Klien menunjukkan minat yang rendah/sedang/tinggi terhadap pekerjaan yang melibatkan aktivitas di luar ruangan.  
+                    job_recommendation:  
+                      type: string  
+                      example: Surveyor lapangan, pemandu wisata, insinyur lapangan.  
+                    advice:  
+                      type: string  
+                      example: Klien sebaiknya mencari peluang kerja yang menawarkan mobilitas tinggi.  
+                    created_at:  
+                      type: string  
+                      format: date-time  
+                      nullable: true  
+                      example: null  
+                    updated_at:  
+                      type: string  
+                      format: date-time  
+                      nullable: true  
+                      example: null  
+                rmib3:  
+                  type: object  
+                  properties:  
+                    id:  
+                      type: integer  
+                      example: 2  
+                    name:  
+                      type: string  
+                      example: Mechanical  
+                    slug:  
+                      type: string  
+                      example: ME  
+                    image:  
+                      type: string  
+                      nullable: true  
+                      example: null  
+                    desc:  
+                      type: string  
+                      example: Skor klien pada aspek ini menunjukkan ketertarikan yang rendah/sedang/tinggi dalam bekerja dengan mesin.  
+                    job_recommendation:  
+                      type: string  
+                      example: Mekanik, insinyur mesin, teknisi alat berat.  
+                    advice:  
+                      type: string  
+                      example: Jika tertarik, klien bisa memperdalam kemampuan di bidang teknik.  
+                    created_at:  
+                      type: string  
+                      format: date-time  
+                      nullable: true  
+                      example: null  
+                    updated_at:  
+                      type: string  
+                      format: date-time  
+                      nullable: true  
+                      example: null  
+        token:  
+          type: string  
+          example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9... 
+    UserRegistration:  
+      type: object  
+      properties:  
+        email:  
+          type: string  
+          format: email  
+          example: syahid25@gmail.com  
+        password:  
+          type: string  
+          format: password  
+          example: password  
+        first_name:  
+          type: string  
+          example: syahid  
+        last_name:  
+          type: string  
+          example: al fajri  
+        birth_place:  
+          type: string  
+          example: Bandung  
+        birth_date:  
+          type: string  
+          format: date  
+          example: 2003-06-25  
+        gender:  
+          type: integer  
+          enum: [1, 2]  
+          example: 2  
+        village_id:  
+          type: integer  
+          example: 321  
+        address:  
+          type: string  
+          example: 123 Example Street  
+        number:  
+          type: string  
+          example: 08123456789  
+        blood_group:  
+          type: string  
+          example: O  
+        religion:  
+          type: string  
+          example: Christian  
+        ethnic:  
+          type: string  
+          example: Asian  
+        nationality:  
+          type: string  
+          example: Indonesian  
+        child_number:  
+          type: integer  
+          example: 1  
+        from_child_number:  
+          type: integer  
+          example: 3  
+        institution_id:  
+          type: integer  
+          example: 1  
+        is_student:  
+          type: integer  
+          example: 1  
+        school_code:  
+          type: string  
+          example: HKIJDA  
+        grade:  
+          type: string  
+          example: 12  
+        majoring:  
+          type: string  
+          example: Science  
+        payment_method_code:  
+          type: string  
+          example: VC   
+        is_register:  
+          type: string  
+          example: true  
+      required:  
+        - email  
+        - password  
+        - first_name  
+        - last_name  
+        - birth_place  
+        - birth_date  
+        - gender  
+        - village_id  
+        - address  
+        - number  
+        - blood_group  
+        - religion  
+        - ethnic  
+        - nationality  
+        - child_number  
+        - from_child_number  
+        - institution_id  
+        - is_student  
+        - school_code  
+        - grade  
+        - majoring  
+        - payment_method_code  
+        - is_register 
+    RegistrationResponse:  
+      type: object  
+      properties:  
+        success:  
+          type: boolean  
+          example: true  
+        is_free:  
+          type: boolean  
+          example: true  
+        message:  
+          type: string  
+          example: "Registrasi berhasil. Silahkan lanjutkan dengan Log In"
+    CustomerDataHit:  
+      type: object  
+      properties:  
+        customer_id:  
+          type: integer  
+          example: data beruba integer id ini di ambil dari customer_id   
+        rmib_1_id:  
+          type: integer  
+          nullable: true  
+          example: null  
+        rmib_2_id:  
+          type: integer  
+          nullable: true  
+          example: null  
+        rmib_3_id:  
+          type: integer  
+          nullable: true  
+          example: null  
+        answers:  
+          type: string  
+          nullable: true  
+          example: null  
+        essay_answers:  
+          type: string  
+          nullable: true  
+          example: null  
+        time:  
+          type: string  
+          format: date-time  
+          nullable: true  
+          example: null  
+        age:  
+          type: integer  
+          nullable: true  
+          example: null  
+      required:  
+        - customer_id
+    CustomerDataHitResponse:  
+      type: object  
+      properties:  
+        status:  
+          type: string  
+          example: "success"  
+        message:  
+          type: string  
+          example: "Data berhasil disimpan."  
+        data:  
+          type: object  
+          properties:  
+            customer_id:  
+              type: integer  
+              example: 802  
+            rmib_1_id:  
+              type: integer  
+              nullable: true  
+              example: null  
+            rmib_2_id:  
+              type: integer  
+              nullable: true  
+              example: null  
+            rmib_3_id:  
+              type: integer  
+              nullable: true  
+              example: null  
+            answers:  
+              type: string  
+              nullable: true  
+              example: null  
+            essay_answers:  
+              type: string  
+              example: "default essay answer"  
+            time:  
+              type: string  
+              format: date-time  
+              nullable: true  
+              example: null  
+            age:  
+              type: integer  
+              nullable: true  
+              example: null  
+            updated_at:  
+              type: string  
+              format: date-time  
+              example: "2025-01-13T14:27:15.000000Z"  
+            created_at:  
+              type: string  
+              format: date-time  
+              example: "2025-01-13T14:27:15.000000Z"  
+            id:  
+              type: integer  
+              example: 3  
+      required:  
+        - status  
+        - message  
+        - data  
+    GetQustionRMIBResponse:  
+      type: object  
+      properties:  
+        data:  
+          type: array  
+          items:  
+            type: object  
+            properties:  
+              type:  
+                type: string  
+                example: "A"  
+              job:  
+                type: array  
+                items:  
+                  type: object  
+                  properties:  
+                    name:  
+                      type: string  
+                      example: "Pekerjaan Pertanian"  
+      required:  
+        - data  
+
+  securitySchemes:  
+    BearerAuth:  
+      type: http  
+      scheme: bearer  
+      bearerFormat: JWT  
+security:  
+  - BearerAuth: []
+
+      
